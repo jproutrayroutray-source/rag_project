@@ -8,23 +8,15 @@ import os
 
 app = FastAPI(title="RAG Chatbot (FAISS + Local Docs)")
 
-# Embedding model
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
-
-# Generator model
 generator = pipeline("text2text-generation", model="google/flan-t5-small")
 
-# FAISS index setup
-dimension = 384  # embedding size for MiniLM
+dimension = 384
 index = faiss.IndexFlatL2(dimension)
 
-# In-memory doc store
 documents = []
 
 
-# ----------------------------
-# Load local .txt documents
-# ----------------------------
 def load_docs(path="docs", chunk_size=400):
     global documents, index
     documents = []
@@ -41,38 +33,27 @@ def load_docs(path="docs", chunk_size=400):
             text = fh.read().strip()
             if not text:
                 continue
-            # Split into chunks
             for i in range(0, len(text), chunk_size):
                 chunk = text[i:i+chunk_size].strip()
                 if len(chunk) > 20:
                     texts.append(chunk)
 
     if not texts:
-        print("⚠ No valid text found in docs/. Add files and restart.")
+        print("No valid text found in docs/. Add files and restart.")
         return
 
     documents.extend(texts)
-
-    # Compute embeddings
     embeddings = embedder.encode(texts, convert_to_numpy=True)
-
-    # Reset and add to FAISS
     index.reset()
     index.add(embeddings.astype(np.float32))
 
-    print(f"✅ Loaded {len(documents)} chunks from {len(filenames)} files.")
+    print(f" Loaded {len(documents)} chunks from {len(filenames)} files.")
 
 
-# ----------------------------
-# Request model
-# ----------------------------
 class Query(BaseModel):
     question: str
 
 
-# ----------------------------
-# Ask endpoint
-# ----------------------------
 @app.post("/ask")
 def ask_question(q: Query):
     if not documents:
@@ -82,18 +63,13 @@ def ask_question(q: Query):
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
-    # Embed question
     q_emb = embedder.encode([question], convert_to_numpy=True).astype(np.float32)
-
-    # FAISS search
     distances, indices = index.search(q_emb, k=3)
     retrieved = [documents[i] for i in indices[0]]
 
-    # Build prompt
     context = " ".join(retrieved)
     prompt = f"Answer the question using the context.\nContext: {context}\nQuestion: {question}"
 
-    # Generate
     response = generator(prompt, max_length=120, do_sample=False)
 
     return {
@@ -103,14 +79,10 @@ def ask_question(q: Query):
     }
 
 
-# ----------------------------
-# Reload endpoint
-# ----------------------------
 @app.post("/reload")
 def reload_docs():
     load_docs("docs")
     return {"status": "reloaded", "chunks": len(documents)}
 
 
-# Auto-load at startup
-load_docs("docs") 
+load_docs("docs")
