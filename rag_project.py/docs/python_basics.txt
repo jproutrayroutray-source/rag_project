@@ -1,0 +1,3 @@
+Python is a high-level programming language widely used for AI, web development, and automation. 
+It supports multiple paradigms like object-oriented, procedural, and functional programming. 
+Common Python libraries for AI include NumPy, Pandas, TensorFlow, PyTorch, and Transformers.

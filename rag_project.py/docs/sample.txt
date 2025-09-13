@@ -1,0 +1,2 @@
+CodeMate AI is building AI-powered developer tools.
+They focus on backend AI engineers and generative AI models.

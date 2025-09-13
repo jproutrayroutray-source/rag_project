@@ -1,0 +1,3 @@
+CodeMate VS Code Extension provides AI-powered code suggestions and debugging assistance directly in the editor. 
+CodeMate Web Builder helps developers create web app prototypes quickly using AI assistance. 
+Both tools aim to reduce manual coding time and improve productivity.

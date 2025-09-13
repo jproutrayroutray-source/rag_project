@@ -1,0 +1,4 @@
+CodeMate AI is building AI-powered developer tools for software engineers. 
+They focus on backend AI engineers and generative AI models. 
+The goal is to simplify coding workflows and integrate AI into software development pipelines.
+CodeMate offers tools like the VS Code Extension and Web Builder to accelerate development.            

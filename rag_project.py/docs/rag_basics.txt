@@ -1,0 +1,4 @@
+Retrieval-Augmented Generation (RAG) combines knowledge retrieval with a generative language model. 
+It allows the chatbot to answer questions using external documents, not just its internal knowledge. 
+The process involves embedding documents, storing them in a vector database like FAISS, 
+and retrieving the most relevant chunks for question answering.
